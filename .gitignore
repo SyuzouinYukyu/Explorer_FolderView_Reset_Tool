@@ -17,6 +17,8 @@ artifacts/
 *.bak
 *.pdb
 *.settings.json
+.dotnet_home/
+Readme.txt
 
 # Registry backups and tool-generated backup folders
 *.reg

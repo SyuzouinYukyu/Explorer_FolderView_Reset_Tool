@@ -13,6 +13,8 @@ partial class MainForm
     private CheckBox restartExplorerCheckBox;
     private CheckBox openBackupAfterCompletionCheckBox;
     private CheckBox verboseLogCheckBox;
+    private CheckBox disableFolderTypeAutoDetectionCheckBox;
+    private ToolTip settingsToolTip;
     private FlowLayoutPanel buttonPanel;
     private Button precheckButton;
     private Button backupOnlyButton;
@@ -52,6 +54,8 @@ partial class MainForm
         restartExplorerCheckBox = new CheckBox();
         openBackupAfterCompletionCheckBox = new CheckBox();
         verboseLogCheckBox = new CheckBox();
+        disableFolderTypeAutoDetectionCheckBox = new CheckBox();
+        settingsToolTip = new ToolTip(components);
         buttonPanel = new FlowLayoutPanel();
         precheckButton = new Button();
         backupOnlyButton = new Button();
@@ -97,9 +101,10 @@ partial class MainForm
         settingsGroup.Controls.Add(restartExplorerCheckBox);
         settingsGroup.Controls.Add(openBackupAfterCompletionCheckBox);
         settingsGroup.Controls.Add(verboseLogCheckBox);
+        settingsGroup.Controls.Add(disableFolderTypeAutoDetectionCheckBox);
         settingsGroup.Location = new Point(12, 78);
         settingsGroup.Name = "settingsGroup";
-        settingsGroup.Size = new Size(960, 136);
+        settingsGroup.Size = new Size(960, 166);
         settingsGroup.TabIndex = 1;
         settingsGroup.TabStop = false;
         settingsGroup.Text = "設定";
@@ -186,6 +191,19 @@ partial class MainForm
         verboseLogCheckBox.Text = "詳細ログを表示";
         verboseLogCheckBox.UseVisualStyleBackColor = true;
         // 
+        // disableFolderTypeAutoDetectionCheckBox
+        // 
+        disableFolderTypeAutoDetectionCheckBox.AutoSize = true;
+        disableFolderTypeAutoDetectionCheckBox.Checked = true;
+        disableFolderTypeAutoDetectionCheckBox.CheckState = CheckState.Checked;
+        disableFolderTypeAutoDetectionCheckBox.Location = new Point(128, 132);
+        disableFolderTypeAutoDetectionCheckBox.Name = "disableFolderTypeAutoDetectionCheckBox";
+        disableFolderTypeAutoDetectionCheckBox.Size = new Size(238, 19);
+        disableFolderTypeAutoDetectionCheckBox.TabIndex = 8;
+        disableFolderTypeAutoDetectionCheckBox.Text = "フォルダー種類自動判定を無効化する";
+        settingsToolTip.SetToolTip(disableFolderTypeAutoDetectionCheckBox, "画像・音楽・動画フォルダなどをWindowsが自動判定して表示形式を切り替える挙動を抑制します。\r\nBags\\AllFolders\\Shell に FolderType=NotSpecified を設定します。");
+        disableFolderTypeAutoDetectionCheckBox.UseVisualStyleBackColor = true;
+        // 
         // buttonPanel
         // 
         buttonPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -197,7 +215,7 @@ partial class MainForm
         buttonPanel.Controls.Add(restoreButton);
         buttonPanel.Controls.Add(saveLogButton);
         buttonPanel.Controls.Add(exitButton);
-        buttonPanel.Location = new Point(12, 224);
+        buttonPanel.Location = new Point(12, 254);
         buttonPanel.Name = "buttonPanel";
         buttonPanel.Size = new Size(960, 72);
         buttonPanel.TabIndex = 2;
@@ -285,7 +303,7 @@ partial class MainForm
         // statusLabel
         // 
         statusLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        statusLabel.Location = new Point(12, 304);
+        statusLabel.Location = new Point(12, 334);
         statusLabel.Name = "statusLabel";
         statusLabel.Size = new Size(960, 20);
         statusLabel.TabIndex = 3;
@@ -296,12 +314,12 @@ partial class MainForm
         logTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         logTextBox.ContextMenuStrip = logContextMenu;
         logTextBox.Font = new Font("Consolas", 9F);
-        logTextBox.Location = new Point(12, 327);
+        logTextBox.Location = new Point(12, 357);
         logTextBox.Multiline = true;
         logTextBox.Name = "logTextBox";
         logTextBox.ReadOnly = true;
         logTextBox.ScrollBars = ScrollBars.Vertical;
-        logTextBox.Size = new Size(960, 322);
+        logTextBox.Size = new Size(960, 292);
         logTextBox.TabIndex = 4;
         // 
         // logContextMenu
@@ -344,7 +362,7 @@ partial class MainForm
         MinimumSize = new Size(900, 620);
         Name = "MainForm";
         StartPosition = FormStartPosition.CenterScreen;
-        Text = "Explorer フォルダ表示記憶リセットツール v1.0.0";
+        Text = "Explorer フォルダ表示記憶リセットツール v1.1.0";
         FormClosing += MainForm_FormClosing;
         settingsGroup.ResumeLayout(false);
         settingsGroup.PerformLayout();

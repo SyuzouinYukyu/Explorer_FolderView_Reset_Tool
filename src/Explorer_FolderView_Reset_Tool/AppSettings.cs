@@ -14,6 +14,8 @@ public sealed class AppSettings
 
     public bool ShowVerboseLog { get; set; }
 
+    public bool DisableFolderTypeAutoDetection { get; set; } = true;
+
     public int? WindowLeft { get; set; }
 
     public int? WindowTop { get; set; }

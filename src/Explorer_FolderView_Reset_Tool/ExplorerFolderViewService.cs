@@ -17,7 +17,10 @@ public sealed class ExplorerFolderViewService
 
     public const string ModernShellKey = @"HKCU\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell";
     public const string ClassicShellKey = @"HKCU\Software\Microsoft\Windows\Shell";
+    public const string AllFoldersShellKey = @"HKCU\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell";
     public const string BagMruSizeValueName = "BagMRU Size";
+    public const string FolderTypeValueName = "FolderType";
+    public const string FolderTypeNotSpecifiedValue = "NotSpecified";
 
     private readonly LogService _log;
     private readonly RegistryBackupService _backupService;
@@ -48,6 +51,7 @@ public sealed class ExplorerFolderViewService
 
             _log.Info($"{ModernShellKey} / {BagMruSizeValueName}: {ReadBagMruSize(ModernShellKey)}");
             _log.Info($"{ClassicShellKey} / {BagMruSizeValueName}: {ReadBagMruSize(ClassicShellKey)}");
+            _log.Info($"FolderType 状態: {ReadFolderTypeState()}");
             _log.Info($"Explorer.exe 起動状態: {(Process.GetProcessesByName("explorer").Length > 0 ? "起動中" : "未起動")}");
 
             CheckBackupWritable(backupRoot);
@@ -59,6 +63,7 @@ public sealed class ExplorerFolderViewService
         string backupRoot,
         int bagMruSize,
         bool restartExplorer,
+        bool disableFolderTypeAutoDetection,
         Func<BackupResult, Task<bool>> shouldContinueAfterBackupFailureAsync,
         CancellationToken cancellationToken)
     {
@@ -67,6 +72,9 @@ public sealed class ExplorerFolderViewService
         _log.Info($"PC名: {Environment.MachineName}");
         _log.Info($"ユーザー名: {Environment.UserDomainName}\\{Environment.UserName}");
         _log.Info($"BagMRU Size 設定値: {bagMruSize}");
+        _log.Info($"フォルダー種類自動判定を無効化する: {(disableFolderTypeAutoDetection ? "ON" : "OFF")}");
+        _log.Info($"FolderType設定対象キー: {AllFoldersShellKey}");
+        _log.Info($"FolderType設定値: {FolderTypeValueName}={FolderTypeNotSpecifiedValue}");
 
         var backupResult = await _backupService.BackupAsync(backupRoot, cancellationToken).ConfigureAwait(false);
         if (backupResult.HasFailures)
@@ -83,6 +91,7 @@ public sealed class ExplorerFolderViewService
         var explorerWasStopped = false;
         var modernResult = false;
         var classicResult = false;
+        var folderTypeResult = false;
 
         try
         {
@@ -93,6 +102,14 @@ public sealed class ExplorerFolderViewService
             DeleteFolderViewKeys();
             modernResult = await SetBagMruSizeAsync(ModernShellKey, bagMruSize, critical: true, cancellationToken).ConfigureAwait(false);
             classicResult = await SetBagMruSizeAsync(ClassicShellKey, bagMruSize, critical: false, cancellationToken).ConfigureAwait(false);
+            if (disableFolderTypeAutoDetection)
+            {
+                folderTypeResult = SetFolderTypeNotSpecified();
+            }
+            else
+            {
+                _log.Info("FolderType=NotSpecified の設定はスキップ");
+            }
         }
         catch (Exception ex)
         {
@@ -126,7 +143,7 @@ public sealed class ExplorerFolderViewService
             _log.Warning("互換キーの BagMRU Size 設定: スキップまたは失敗");
         }
 
-        return new RepairResult(backupResult.BackupDirectory, true, modernResult, classicResult);
+        return new RepairResult(backupResult.BackupDirectory, true, modernResult, classicResult, disableFolderTypeAutoDetection, folderTypeResult);
     }
 
     public Task RestartExplorerAsync(CancellationToken cancellationToken)
@@ -151,6 +168,27 @@ public sealed class ExplorerFolderViewService
         catch (Exception ex)
         {
             return $"取得失敗: {ex.Message}";
+        }
+    }
+
+    private static string ReadFolderTypeState()
+    {
+        try
+        {
+            using var key = RegistryBackupService.OpenCurrentUserSubKey(AllFoldersShellKey, writable: false);
+            if (key is null)
+            {
+                return "FolderType キーなし";
+            }
+
+            var value = key.GetValue(FolderTypeValueName);
+            return value is null
+                ? "FolderType 現在値: 未設定"
+                : $"FolderType 現在値: {value}";
+        }
+        catch (Exception ex)
+        {
+            return $"FolderType 取得失敗: {ex.Message}";
         }
     }
 
@@ -282,6 +320,34 @@ public sealed class ExplorerFolderViewService
 
         return false;
     }
+
+    private bool SetFolderTypeNotSpecified()
+    {
+        try
+        {
+            var subKeyPath = RegistryBackupService.ToCurrentUserSubKeyPath(AllFoldersShellKey);
+            using var key = Registry.CurrentUser.CreateSubKey(subKeyPath, writable: true);
+            if (key is null)
+            {
+                throw new InvalidOperationException("Registry.CurrentUser.CreateSubKey が null を返しました。");
+            }
+
+            key.SetValue(FolderTypeValueName, FolderTypeNotSpecifiedValue, RegistryValueKind.String);
+            _log.Success("FolderType設定成功");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _log.Exception(ex, "FolderType設定失敗");
+            return false;
+        }
+    }
 }
 
-public sealed record RepairResult(string BackupDirectory, bool RepairExecuted, bool ModernBagMruSizeSet, bool ClassicBagMruSizeSet);
+public sealed record RepairResult(
+    string BackupDirectory,
+    bool RepairExecuted,
+    bool ModernBagMruSizeSet,
+    bool ClassicBagMruSizeSet,
+    bool FolderTypeSettingRequested = false,
+    bool FolderTypeNotSpecifiedSet = false);

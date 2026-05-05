@@ -52,6 +52,7 @@ public partial class MainForm : Form
         restartExplorerCheckBox.Checked = _settings.RestartExplorerAfterRepair;
         openBackupAfterCompletionCheckBox.Checked = _settings.OpenBackupAfterCompletion;
         verboseLogCheckBox.Checked = _settings.ShowVerboseLog;
+        disableFolderTypeAutoDetectionCheckBox.Checked = _settings.DisableFolderTypeAutoDetection;
 
         if (_settings.WindowWidth is > 0 && _settings.WindowHeight is > 0)
         {
@@ -71,6 +72,7 @@ public partial class MainForm : Form
         _settings.RestartExplorerAfterRepair = restartExplorerCheckBox.Checked;
         _settings.OpenBackupAfterCompletion = openBackupAfterCompletionCheckBox.Checked;
         _settings.ShowVerboseLog = verboseLogCheckBox.Checked;
+        _settings.DisableFolderTypeAutoDetection = disableFolderTypeAutoDetectionCheckBox.Checked;
 
         if (WindowState == FormWindowState.Normal)
         {
@@ -168,6 +170,7 @@ public partial class MainForm : Form
                 backupRootTextBox.Text.Trim(),
                 (int)bagMruSizeNumeric.Value,
                 restartExplorerCheckBox.Checked,
+                disableFolderTypeAutoDetectionCheckBox.Checked,
                 ConfirmContinueAfterBackupFailureAsync,
                 token);
 
@@ -427,6 +430,7 @@ public partial class MainForm : Form
         restartExplorerCheckBox.Enabled = enabled;
         openBackupAfterCompletionCheckBox.Enabled = enabled;
         verboseLogCheckBox.Enabled = enabled;
+        disableFolderTypeAutoDetectionCheckBox.Enabled = enabled;
     }
 
     private void SelectAllMenuItem_Click(object? sender, EventArgs e)

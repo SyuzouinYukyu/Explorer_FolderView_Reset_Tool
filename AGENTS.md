@@ -2,7 +2,7 @@
 
 ## Project
 
-Explorer_FolderView_Reset_Tool_v1.0.0
+Explorer_FolderView_Reset_Tool_v1.1.0
 
 This project is a Windows 11 utility for repairing Explorer folder view memory by backing up and resetting the current user's Shell Bags / BagMRU registry data.
 
@@ -160,7 +160,7 @@ This project is a Windows 11 utility for repairing Explorer folder view memory b
 - Keep Designer.cs and MainForm.cs consistent.
 - Do not manually corrupt Designer-generated layout code.
 - Do not add unknown resources or icons unless explicitly requested.
-- Application name should remain Explorer_FolderView_Reset_Tool_v1.0.0 unless explicitly instructed.
+- Application name should remain Explorer_FolderView_Reset_Tool_v1.1.0 unless explicitly instructed.
 
 ## Build Helper Script Rules
 

@@ -16,7 +16,7 @@ public sealed class SettingsService
 
     public SettingsService()
     {
-        _settingsPath = Path.Combine(AppContext.BaseDirectory, "Explorer_FolderView_Reset_Tool_v1.0.0.settings.json");
+        _settingsPath = Path.Combine(AppContext.BaseDirectory, "Explorer_FolderView_Reset_Tool_v1.1.0.settings.json");
     }
 
     public string SettingsPath => _settingsPath;
@@ -25,12 +25,19 @@ public sealed class SettingsService
     {
         try
         {
-            if (!File.Exists(_settingsPath))
+            var loadPath = _settingsPath;
+            var previousVersionPath = Path.Combine(AppContext.BaseDirectory, "Explorer_FolderView_Reset_Tool_v1.0.0.settings.json");
+            if (!File.Exists(loadPath) && File.Exists(previousVersionPath))
+            {
+                loadPath = previousVersionPath;
+            }
+
+            if (!File.Exists(loadPath))
             {
                 return new AppSettings();
             }
 
-            var json = File.ReadAllText(_settingsPath);
+            var json = File.ReadAllText(loadPath);
             return JsonSerializer.Deserialize<AppSettings>(json, _jsonOptions) ?? new AppSettings();
         }
         catch
