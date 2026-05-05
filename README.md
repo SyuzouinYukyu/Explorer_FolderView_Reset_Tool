@@ -106,4 +106,4 @@ Explorer_FolderView_Backup\yyyyMMdd_HHmmss\
 
 ## 作者
 
-Sunazuri Syuzouin Yukyu
+Syuzouin Yukyu
