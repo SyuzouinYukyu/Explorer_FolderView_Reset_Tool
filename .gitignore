@@ -1,0 +1,32 @@
+# Build outputs
+bin/
+obj/
+publish/
+artifacts/
+
+# Visual Studio / user state
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.pdb
+*.settings.json
+
+# Registry backups and tool-generated backup folders
+*.reg
+Explorer_FolderView_Backup/
+
+# Packaged artifacts
+*.zip
+*.7z
+*.rar
+*.nupkg
+
+# Local generated icon package; the checked-in app icon lives under src/.../Assets/
+Explorer_FolderView_Reset_Tool_v1.0.0_icon_pack/
