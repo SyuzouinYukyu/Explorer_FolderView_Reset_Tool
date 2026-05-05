@@ -95,3 +95,7 @@ Explorer_FolderView_Backup\yyyyMMdd_HHmmss\
 本ソフトウェアは独自ライセンスです。ソースコードは透明性確保と動作内容確認のために公開されていますが、いわゆるオープンソースソフトウェアではありません。
 
 利用条件、禁止事項、免責事項は [LICENSE](LICENSE) を確認してください。
+
+## 作者
+
+Sunazuri Syuzouin Yukyu
